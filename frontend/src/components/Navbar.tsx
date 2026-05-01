@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo, useEffect, useRef, useSyncExternalStore } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import NotificationBell from './NotificationBell/NotificationBell';
+import { useSocket } from '../context/SocketContext';
 import './Navbar.css';
 
 // Custom hook to sync with localStorage
@@ -39,16 +41,15 @@ const Navbar = () => {
     // Derive active nav link from current location (no effect needed)
     const active = useMemo(() => {
         const path = location.pathname;
-        const hash = location.hash;
 
         if (path.startsWith('/problems')) return 'Problems';
         if (path.startsWith('/mock-test')) return 'Mock Test';
         if (path.startsWith('/companies')) return 'Companies';
+        if (path.startsWith('/mentors')) return 'Mentors';
         if (path.startsWith('/roadmaps')) return 'Roadmaps';
-        if (path === '/' && hash === '#resources') return 'Resources';
-        if (path === '/') return 'Roadmaps';
+        if (path === '/') return 'Problems';
         return '';
-    }, [location.pathname, location.hash]);
+    }, [location.pathname]);
 
     // Hide navbar on scroll down, show on scroll up
     useEffect(() => {
@@ -87,12 +88,14 @@ const Navbar = () => {
         navigate('/');
     };
 
+    const { unreadMessages } = useSocket();
+
     const navLinks = [
-        { name: 'Roadmaps', href: '/roadmaps' },
         { name: 'Problems', href: '/problems' },
+        { name: 'Roadmaps', href: '/roadmaps' },
         { name: 'Companies', href: '/companies' },
+        { name: 'Mentors', href: '/mentors' },
         { name: 'Mock Test', href: '/mock-test' },
-        { name: 'Resources', href: '/#resources' },
     ];
 
     const getInitials = (name: string) => {
@@ -134,54 +137,71 @@ const Navbar = () => {
 
                 <div className="nav-right">
                     {isLoggedIn ? (
-                        <div className="profile-dropdown-container" ref={dropdownRef}>
-                            <button
-                                className="profile-btn"
-                                onClick={() => setShowDropdown(!showDropdown)}
-                            >
-                                <div className="avatar">
-                                    {getInitials(userName)}
-                                </div>
-                                <span className="dropdown-arrow">{showDropdown ? '▲' : '▼'}</span>
-                            </button>
-
-                            <AnimatePresence>
-                                {showDropdown && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                                        transition={{ duration: 0.15 }}
-                                        className="profile-dropdown"
-                                    >
-                                        <Link
-                                            to="/dashboard"
-                                            className="dropdown-item"
-                                            onClick={() => setShowDropdown(false)}
-                                        >
-                                            <span className="dropdown-icon">📊</span>
-                                            Dashboard
-                                        </Link>
-                                        <Link
-                                            to="/settings"
-                                            className="dropdown-item"
-                                            onClick={() => setShowDropdown(false)}
-                                        >
-                                            <span className="dropdown-icon">⚙️</span>
-                                            Settings
-                                        </Link>
-                                        <div className="dropdown-divider" />
-                                        <button
-                                            className="dropdown-item logout"
-                                            onClick={handleLogout}
-                                        >
-                                            <span className="dropdown-icon">🚪</span>
-                                            Logout
-                                        </button>
-                                    </motion.div>
+                        <>
+                            <Link to="/messages" className="nav-icon-btn" title="Messages">
+                                💬
+                                {unreadMessages > 0 && (
+                                    <span className="icon-badge">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
                                 )}
-                            </AnimatePresence>
-                        </div>
+                            </Link>
+                            <NotificationBell />
+                            <div className="profile-dropdown-container" ref={dropdownRef}>
+                                <button
+                                    className="profile-btn"
+                                    onClick={() => setShowDropdown(!showDropdown)}
+                                >
+                                    <div className="avatar">
+                                        {getInitials(userName)}
+                                    </div>
+                                    <span className="dropdown-arrow">{showDropdown ? '▲' : '▼'}</span>
+                                </button>
+
+                                <AnimatePresence>
+                                    {showDropdown && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                            transition={{ duration: 0.15 }}
+                                            className="profile-dropdown"
+                                        >
+                                            <Link
+                                                to="/dashboard"
+                                                className="dropdown-item"
+                                                onClick={() => setShowDropdown(false)}
+                                            >
+                                                <span className="dropdown-icon">📊</span>
+                                                Dashboard
+                                            </Link>
+                                            <Link
+                                                to="/profile"
+                                                className="dropdown-item"
+                                                onClick={() => setShowDropdown(false)}
+                                            >
+                                                <span className="dropdown-icon">👤</span>
+                                                Coding Profile
+                                            </Link>
+                                            <Link
+                                                to="/settings"
+                                                className="dropdown-item"
+                                                onClick={() => setShowDropdown(false)}
+                                            >
+                                                <span className="dropdown-icon">⚙️</span>
+                                                Settings
+                                            </Link>
+                                            <div className="dropdown-divider" />
+                                            <button
+                                                className="dropdown-item logout"
+                                                onClick={handleLogout}
+                                            >
+                                                <span className="dropdown-icon">🚪</span>
+                                                Logout
+                                            </button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </>
                     ) : (
                         <Link to="/login">
                             <button className="login-btn">

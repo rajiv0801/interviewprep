@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Application Approved – Graphora</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0f0f0f;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #2a2a2a;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #fff;
+            font-size: 26px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+        }
+
+        .content {
+            padding: 36px 32px;
+            color: #e0e0e0;
+        }
+
+        .content h2 {
+            color: #fff;
+            margin-top: 0;
+        }
+
+        .steps {
+            background: #242424;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid #2e2e2e;
+        }
+
+        .step:last-child {
+            border-bottom: none;
+        }
+
+        .step-num {
+            background: #059669;
+            color: #fff;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .step-text strong {
+            color: #fff;
+        }
+
+        .btn {
+            display: block;
+            width: fit-content;
+            margin: 24px auto;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, #059669, #047857);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .footer {
+            background: #111;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+            border-top: 1px solid #222;
+        }
+
+        .footer a {
+            color: #6366f1;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 You're Approved as a Mentor!</h1>
+            <p>Welcome to the Graphora Mentor Community</p>
+        </div>
+        <div class="content">
+            <h2>Congratulations, {{mentorName}}!</h2>
+            <p>We're thrilled to welcome you as an official Graphora mentor. Your application has been reviewed and
+                approved. You can now start accepting sessions and helping students ace their interviews.</p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-text"><strong>Complete your profile</strong> – Add your photo, bio, and expertise
+                        areas to attract students.</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-text"><strong>Set your availability</strong> – Define your weekly schedule so
+                        students can book sessions.</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-text"><strong>Set your pricing</strong> – Choose your rates for 30-min and 60-min
+                        sessions.</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div class="step-text"><strong>Add payout details</strong> – Set up your bank account or UPI to
+                        receive earnings.</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">5</div>
+                    <div class="step-text"><strong>Go live!</strong> – Enable "Accepting Bookings" and start receiving
+                        session requests.</div>
+                </div>
+            </div>
+
+            <a href="{{dashboardUrl}}" class="btn">Go to Mentor Dashboard</a>
+
+            <p style="font-size: 13px; color: #666; text-align: center;">Questions? Our team is here to help you get
+                started.</p>
+        </div>
+        <div class="footer">
+            <p>Need help? <a href="mailto:{{supportEmail}}">{{supportEmail}}</a></p>
+            <p>© 2025 Graphora. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+
+</html>

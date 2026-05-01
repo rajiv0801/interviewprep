@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { protect, adminOnly, validate, submissionLimiter } from '../middleware';
+import { protect, optionalAuth, adminOnly, validate, submissionLimiter } from '../middleware';
 import {
     createProblemSchema,
     updateProblemSchema,
@@ -32,7 +32,7 @@ problemRouter.get('/health', (_req, res) => {
 problemRouter.get('/user/solved', protect, validate(listProblemsSchema), getSolvedProblems);
 
 // Get problem stats (difficulty counts, topic counts)
-problemRouter.get('/stats', protect, getProblemStats);
+problemRouter.get('/stats', optionalAuth, getProblemStats);
 
 problemRouter.post('/generate-mock', protect, submissionLimiter, generateMockProblems);
 
@@ -53,12 +53,12 @@ problemRouter.delete('/:id', protect, adminOnly, validate(deleteProblemSchema), 
 
 
 // Get all problems with filtering & pagination
-problemRouter.get('/', protect, validate(listProblemsSchema), getAllProblems);
+problemRouter.get('/', optionalAuth, validate(listProblemsSchema), getAllProblems);
 
 // Get submissions for a problem (before /:id to match /123/submissions)
 problemRouter.get('/:id/submissions', protect, validate(getProblemSchema), getSubmissions);
 
 // Get single problem by ID or slug (LAST - catches all remaining /:id patterns)
-problemRouter.get('/:id', protect, validate(getProblemSchema), getProblemById);
+problemRouter.get('/:id', optionalAuth, validate(getProblemSchema), getProblemById);
 
 export default problemRouter;

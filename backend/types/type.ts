@@ -27,6 +27,16 @@ export type MessageType = 'text' | 'code' | 'file' | 'image';
 export type StudyGroupRole = 'admin' | 'moderator' | 'member';
 export type StudySessionStatus = 'scheduled' | 'ongoing' | 'completed' | 'cancelled';
 export type StudyGroupDifficulty = 'easy' | 'medium' | 'hard' | 'mixed';
+export type MentorApplicationStatus = 'pending' | 'approved' | 'rejected';
+export type SessionTopic = 'DSA Problem Solving' | 'System Design' | 'Resume Review' | 'Mock Interview' | 'Career Guidance' | 'Frontend Development' | 'Backend Development' | 'ML/AI Guidance';
+export type PayoutStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type PayoutMethod = 'bank_transfer' | 'upi';
+export type NotificationType =
+    | 'booking_confirmed' | 'booking_cancelled' | 'booking_reminder'
+    | 'session_started' | 'session_completed'
+    | 'new_message' | 'message_digest'
+    | 'payment_received' | 'payout_processed'
+    | 'review_received' | 'mentor_approved' | 'mentor_rejected';
 
 // ==================== USER ====================
 export interface IUserSubscription {
@@ -47,6 +57,14 @@ export interface ISocialLinks {
     github?: string;
     linkedin?: string;
     portfolio?: string;
+}
+
+export interface ICodingProfiles {
+    leetcode?: string;
+    gfg?: string;
+    codeforces?: string;
+    codechef?: string;
+    github?: string;
 }
 
 export interface IUser extends Document {
@@ -79,6 +97,7 @@ export interface IUser extends Document {
     bookmarkedProblems: Types.ObjectId[];
     stats: IUserStats;
     socialLinks: ISocialLinks;
+    codingProfiles?: ICodingProfiles;
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -329,11 +348,28 @@ export interface IMentorRating {
     count: number;
 }
 
+export interface IMentorBankAccount {
+    accountNumber?: string;
+    ifscCode?: string;
+    accountHolder?: string;
+}
+
+export interface IMentorPayoutDetails {
+    method?: PayoutMethod;
+    upiId?: string;
+    bankAccount?: IMentorBankAccount;
+}
+
 export interface IMentor extends Document {
     user: Types.ObjectId;
+    slug: string;
+    avatar?: string;
+    linkedinUrl?: string;
     headline?: string;
     bio?: string;
     expertise: MentorExpertise[];
+    sessionTopics: SessionTopic[];
+    languages: string[];
     experience: IMentorExperience;
     availability: IAvailability[];
     timezone: string;
@@ -344,6 +380,11 @@ export interface IMentor extends Document {
     responseTime?: number;
     verified: boolean;
     verifiedAt?: Date;
+    applicationStatus: MentorApplicationStatus;
+    applicationNote?: string;
+    cancellationRate: number;
+    repeatStudentRate: number;
+    payoutDetails?: IMentorPayoutDetails;
     isAcceptingBookings: boolean;
     isActive: boolean;
     createdAt: Date;
@@ -354,7 +395,8 @@ export interface IMentor extends Document {
 export interface IPayment {
     amount: number;
     currency: string;
-    stripePaymentId?: string;
+    razorpayOrderId?: string;
+    razorpayPaymentId?: string;
     status: PaymentStatus;
     paidAt?: Date;
 }
@@ -365,7 +407,27 @@ export interface IStudentFeedback {
     submittedAt?: Date;
 }
 
+export interface IBookingRefund {
+    amount?: number;
+    reason?: string;
+    processedAt?: Date;
+    razorpayRefundId?: string;
+}
+
+export interface IBookingSessionNotes {
+    content?: string;
+    updatedAt?: Date;
+}
+
+export interface IBookingMentorPayout {
+    amount?: number;
+    status?: PayoutStatus;
+    processedAt?: Date;
+    transactionId?: string;
+}
+
 export interface IBooking extends Document {
+    bookingId: string;
     mentor: Types.ObjectId;
     student: Types.ObjectId;
     scheduledAt: Date;
@@ -375,11 +437,18 @@ export interface IBooking extends Document {
     topic?: string;
     agenda?: string;
     status: BookingStatus;
+    jitsiRoomName?: string;
     meetingLink?: string;
     meetingProvider?: MeetingProvider;
     recordingUrl?: string;
     payment: IPayment;
+    platformFee?: number;
+    mentorPayout?: IBookingMentorPayout;
     studentFeedback: IStudentFeedback;
+    sessionNotes?: IBookingSessionNotes;
+    refund?: IBookingRefund;
+    reminderSent: boolean;
+    payoutProcessed: boolean;
     mentorNotes?: string;
     cancelledBy?: 'student' | 'mentor' | 'system';
     cancellationReason?: string;
@@ -595,6 +664,63 @@ export interface IStudyGroup extends Document {
     conversation?: Types.ObjectId;
     stats: IStudyGroupStats;
     isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+// ==================== MENTOR REVIEW ====================
+export interface IMentorReply {
+    content: string;
+    repliedAt: Date;
+}
+
+export interface IMentorReview extends Document {
+    booking: Types.ObjectId;
+    mentor: Types.ObjectId;
+    student: Types.ObjectId;
+    rating: number;
+    review?: string;
+    isPublic: boolean;
+    isReported: boolean;
+    reportReason?: string;
+    mentorReply?: IMentorReply;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+// ==================== NOTIFICATION ====================
+export interface INotification extends Document {
+    user: Types.ObjectId;
+    type: NotificationType;
+    title: string;
+    message: string;
+    data?: Record<string, unknown>;
+    isRead: boolean;
+    readAt?: Date;
+    actionUrl?: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+// ==================== PAYOUT ====================
+export interface IPayoutPeriod {
+    start: Date;
+    end: Date;
+}
+
+export interface IPayout extends Document {
+    mentor: Types.ObjectId;
+    bookings: Types.ObjectId[];
+    amount: number;
+    platformFee: number;
+    netAmount: number;
+    currency: string;
+    status: PayoutStatus;
+    method?: PayoutMethod;
+    transactionId?: string;
+    failureReason?: string;
+    processedAt?: Date;
+    period: IPayoutPeriod;
     createdAt: Date;
     updatedAt: Date;
 }

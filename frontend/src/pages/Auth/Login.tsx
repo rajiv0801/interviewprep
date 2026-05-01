@@ -77,7 +77,10 @@ const Login = () => {
                 </div>
 
                 <div className="form-group">
-                    <label className="form-label">Password</label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <label className="form-label" style={{ marginBottom: 0 }}>Password</label>
+                        <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: '#6366f1', textDecoration: 'none' }}>Forgot password?</Link>
+                    </div>
                     <input
                         type="password"
                         name="password"

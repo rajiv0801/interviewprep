@@ -146,6 +146,13 @@ export const updateProfileSchema = z.object({
             github: urlSchema,
             linkedin: urlSchema,
             portfolio: urlSchema
+        }).optional(),
+        codingProfiles: z.object({
+            leetcode: z.string().trim().optional(),
+            gfg: z.string().trim().optional(),
+            codeforces: z.string().trim().optional(),
+            codechef: z.string().trim().optional(),
+            github: z.string().trim().optional()
         }).optional()
     })
 });

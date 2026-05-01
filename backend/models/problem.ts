@@ -37,7 +37,7 @@ const ProblemSchema = new Schema<IProblem>({
     submissionsCount: { type: Number, default: 0 },
     acceptedCount: { type: Number, default: 0 },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    slug: { type: String, unique: true, index: true },
+    slug: { type: String, unique: true },
     premium: { type: Boolean, default: false },
     likes: { type: Number, default: 0 },
     dislikes: { type: Number, default: 0 },

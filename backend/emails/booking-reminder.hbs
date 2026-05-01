@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Reminder – Graphora</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0f0f0f;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #2a2a2a;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #fff;
+            font-size: 26px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+        }
+
+        .content {
+            padding: 36px 32px;
+            color: #e0e0e0;
+        }
+
+        .content h2 {
+            color: #fff;
+            margin-top: 0;
+        }
+
+        .countdown {
+            text-align: center;
+            background: #242424;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .countdown .time {
+            font-size: 48px;
+            font-weight: 900;
+            color: #f59e0b;
+        }
+
+        .countdown .label {
+            font-size: 14px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .detail-card {
+            background: #242424;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #2e2e2e;
+            font-size: 14px;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #888;
+        }
+
+        .detail-value {
+            color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        .btn {
+            display: block;
+            width: fit-content;
+            margin: 24px auto;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .checklist {
+            background: #1e2a1e;
+            border: 1px solid #2d4a2d;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 20px 0;
+        }
+
+        .checklist p {
+            margin: 0 0 8px;
+            color: #86efac;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .checklist ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #a0c4a0;
+            font-size: 13px;
+        }
+
+        .checklist li {
+            margin: 4px 0;
+        }
+
+        .footer {
+            background: #111;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+            border-top: 1px solid #222;
+        }
+
+        .footer a {
+            color: #6366f1;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⏰ Session Starting Soon!</h1>
+            <p>Your mentorship session is about to begin</p>
+        </div>
+        <div class="content">
+            <h2>Hi {{recipientName}},</h2>
+            <p>This is a reminder that your session with <strong>{{mentorName}}</strong> is starting soon.</p>
+
+            <div class="countdown">
+                <div class="time">{{minutesUntil}} min</div>
+                <div class="label">until your session starts</div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-row">
+                    <span class="detail-label">Mentor</span>
+                    <span class="detail-value">{{mentorName}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Scheduled At</span>
+                    <span class="detail-value">{{scheduledAt}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Booking ID</span>
+                    <span class="detail-value">{{bookingId}}</span>
+                </div>
+            </div>
+
+            <div class="checklist">
+                <p>✅ Pre-session checklist:</p>
+                <ul>
+                    <li>Test your microphone and camera</li>
+                    <li>Find a quiet, well-lit space</li>
+                    <li>Have your questions ready</li>
+                    <li>Open the meeting link below</li>
+                </ul>
+            </div>
+
+            <a href="{{meetingLink}}" class="btn">🎥 Join Session Now</a>
+        </div>
+        <div class="footer">
+            <p>Need help? <a href="mailto:{{supportEmail}}">{{supportEmail}}</a></p>
+            <p>© 2025 Graphora. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+
+</html>

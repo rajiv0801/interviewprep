@@ -162,11 +162,6 @@ const handleError = (error: unknown, res: Response, context: string): void => {
 };
 
 
-/**
- * @route   POST /api/auth/register
- * @desc    Register a new user
- * @access  Public
- */
 export const register = async (
     req: Request<object, object, RegisterBody>,
     res: Response
@@ -241,11 +236,6 @@ export const register = async (
     }
 };
 
-/**
- * @route   POST /api/auth/verify-otp
- * @desc    Verify OTP and activate account
- * @access  Public
- */
 export const verifyOTP = async (
     req: Request<object, object, VerifyOTPBody>,
     res: Response
@@ -284,11 +274,6 @@ export const verifyOTP = async (
     }
 };
 
-/**
- * @route   POST /api/auth/resend-otp
- * @desc    Resend OTP to email
- * @access  Public
- */
 export const resendOTP = async (
     req: Request<object, object, ResendOTPBody>,
     res: Response
@@ -331,11 +316,6 @@ export const resendOTP = async (
     }
 };
 
-/**
- * @route   POST /api/auth/login
- * @desc    Authenticate user and get token
- * @access  Public
- */
 export const login = async (
     req: Request<object, object, LoginBody>,
     res: Response
@@ -376,11 +356,6 @@ export const login = async (
     }
 };
 
-/**
- * @route   POST /api/auth/logout
- * @desc    Logout user and clear cookie
- * @access  Private
- */
 export const logout = async (_req: Request, res: Response): Promise<void> => {
     res.cookie('token', 'loggedout', {
         expires: new Date(Date.now() + 1000),
@@ -390,11 +365,6 @@ export const logout = async (_req: Request, res: Response): Promise<void> => {
     sendResponse(res, 200, { success: true, message: 'Logged out successfully' });
 };
 
-/**
- * @route   GET /api/auth/profile
- * @desc    Get current user profile
- * @access  Private
- */
 export const getProfile = async (
     req: AuthenticatedRequest,
     res: Response
@@ -423,11 +393,6 @@ export const getProfile = async (
     }
 };
 
-/**
- * @route   PATCH /api/auth/profile
- * @desc    Update user profile
- * @access  Private
- */
 export const updateProfile = async (
     req: AuthenticatedRequest & { body: UpdateProfileBody },
     res: Response
@@ -465,6 +430,15 @@ export const updateProfile = async (
             if (socialLinks.portfolio !== undefined) updateData['socialLinks.portfolio'] = socialLinks.portfolio;
         }
 
+        if (filteredBody.codingProfiles && typeof filteredBody.codingProfiles === 'object') {
+            const codingProfiles = filteredBody.codingProfiles as Record<string, string>;
+            if (codingProfiles.leetcode !== undefined) updateData['codingProfiles.leetcode'] = codingProfiles.leetcode;
+            if (codingProfiles.gfg !== undefined) updateData['codingProfiles.gfg'] = codingProfiles.gfg;
+            if (codingProfiles.codeforces !== undefined) updateData['codingProfiles.codeforces'] = codingProfiles.codeforces;
+            if (codingProfiles.codechef !== undefined) updateData['codingProfiles.codechef'] = codingProfiles.codechef;
+            if (codingProfiles.github !== undefined) updateData['codingProfiles.github'] = codingProfiles.github;
+        }
+
         if (Object.keys(updateData).length === 0) {
             sendError(res, 400, 'No valid fields to update');
             return;
@@ -491,11 +465,6 @@ export const updateProfile = async (
     }
 };
 
-/**
- * @route   PATCH /api/auth/change-password
- * @desc    Change user password
- * @access  Private
- */
 export const changePassword = async (
     req: AuthenticatedRequest & { body: ChangePasswordBody },
     res: Response
@@ -544,11 +513,6 @@ export const changePassword = async (
     }
 };
 
-/**
- * @route   POST /api/auth/forgot-password
- * @desc    Request password reset email
- * @access  Public
- */
 export const forgotPassword = async (
     req: Request<object, object, ForgotPasswordBody>,
     res: Response
@@ -586,11 +550,6 @@ export const forgotPassword = async (
     }
 };
 
-/**
- * @route   POST /api/auth/reset-password
- * @desc    Reset password with token
- * @access  Public
- */
 export const resetPassword = async (
     req: Request<object, object, ResetPasswordBody>,
     res: Response

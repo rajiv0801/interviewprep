@@ -1,11 +1,14 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AnimatePresence, motion } from 'framer-motion';
+import { SocketProvider } from './context/SocketContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
 import VerifyOTP from './pages/Auth/VerifyOTP';
+import ForgotPassword from './pages/Auth/ForgotPassword';
+import ResetPassword from './pages/Auth/ResetPassword';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Settings from './pages/Settings/Settings';
 import MockTest from './pages/MockTest/MockTest';
@@ -16,6 +19,11 @@ import ProblemSolver from './pages/Problems/ProblemSolver';
 import Companies from './pages/Companies/Companies';
 import Roadmaps from './pages/Roadmaps/Roadmaps';
 import RoadmapDetail from './pages/Roadmaps/RoadmapDetail';
+import Mentors from './pages/Mentors/Mentors';
+import MentorProfile from './pages/Mentors/MentorProfile';
+import BookingCheckout from './pages/Mentors/BookingCheckout';
+import Messages from './pages/Messages/Messages';
+import Profile from './pages/Profile/Profile';
 
 // Wrapper for page transitions
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -35,13 +43,13 @@ const AppLayout = () => {
   const location = useLocation();
 
   // Define logic for showing Navbar
-  // Show Navbar on main pages, hide on auth, solver, session, and roadmap detail pages
-  const isAuthPage = ['/login', '/signup', '/verify-otp'].includes(location.pathname);
+  const isAuthPage = ['/login', '/signup', '/verify-otp', '/forgot-password'].includes(location.pathname) || location.pathname.startsWith('/reset-password/');
   const isSessionPage = location.pathname.startsWith('/mock-test/session/');
   const isProblemSolverPage = location.pathname.startsWith('/problems/') && location.pathname !== '/problems';
   const isRoadmapDetailPage = location.pathname.startsWith('/roadmaps/') && location.pathname !== '/roadmaps';
+  const isMessagesPage = location.pathname.startsWith('/messages');
 
-  const showNavbar = !isAuthPage && !isSessionPage && !isProblemSolverPage && !isRoadmapDetailPage;
+  const showNavbar = !isAuthPage && !isSessionPage && !isProblemSolverPage && !isRoadmapDetailPage && !isMessagesPage;
 
   return (
     <div className="app">
@@ -51,7 +59,7 @@ const AppLayout = () => {
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={
             <PageWrapper>
-              <Hero />
+              {localStorage.getItem('token') ? <Navigate to="/problems" replace /> : <Hero />}
             </PageWrapper>
           } />
 
@@ -73,9 +81,27 @@ const AppLayout = () => {
             </PageWrapper>
           } />
 
+          <Route path="/forgot-password" element={
+            <PageWrapper>
+              <ForgotPassword />
+            </PageWrapper>
+          } />
+
+          <Route path="/reset-password/:token" element={
+            <PageWrapper>
+              <ResetPassword />
+            </PageWrapper>
+          } />
+
           <Route path="/dashboard" element={
             <PageWrapper>
               <Dashboard />
+            </PageWrapper>
+          } />
+
+          <Route path="/profile" element={
+            <PageWrapper>
+              <Profile />
             </PageWrapper>
           } />
 
@@ -109,8 +135,6 @@ const AppLayout = () => {
             </PageWrapper>
           } />
 
-          {/* Problem Solver has its own header/layout, no wrapper needed for immersive feel? 
-              Actually, fading in is nice. */}
           <Route path="/problems/:id" element={
             <PageWrapper>
               <ProblemSolver />
@@ -140,6 +164,34 @@ const AppLayout = () => {
               <MockSession />
             </PageWrapper>
           } />
+
+          {/* Mentor Connect */}
+          <Route path="/mentors" element={
+            <PageWrapper>
+              <Mentors />
+            </PageWrapper>
+          } />
+
+          <Route path="/mentors/:slug" element={
+            <PageWrapper>
+              <MentorProfile />
+            </PageWrapper>
+          } />
+
+          <Route path="/mentors/:slug/book" element={
+            <PageWrapper>
+              <BookingCheckout />
+            </PageWrapper>
+          } />
+
+          {/* Chat */}
+          <Route path="/messages" element={
+            <Messages />
+          } />
+
+          <Route path="/messages/:conversationId" element={
+            <Messages />
+          } />
         </Routes>
       </AnimatePresence>
     </div>
@@ -149,17 +201,19 @@ const AppLayout = () => {
 function App() {
   return (
     <Router>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: '#18181b',
-            color: '#fff',
-            border: '1px solid #333',
-          },
-        }}
-      />
-      <AppLayout />
+      <SocketProvider>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: '#18181b',
+              color: '#fff',
+              border: '1px solid #333',
+            },
+          }}
+        />
+        <AppLayout />
+      </SocketProvider>
     </Router>
   );
 }

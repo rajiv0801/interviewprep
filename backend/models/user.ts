@@ -26,7 +26,7 @@ const UserSchema = new Schema<IUser>({
     companies: [{
         type: String,
         trim: true,
-        enum: ['Microsoft', 'Google', 'Meta', 'Amazon', 'Apple', 'Oracle', 'Adobe', 'Salesforce', 'SAP', 'Intel', 'Qualcomm', 'Nvidia', 'Samsung']
+        enum: ['Microsoft', 'Google', 'Meta', 'Amazon', 'Apple', 'Oracle', 'Adobe', 'Salesforce', 'SAP', 'Intel', 'Qualcomm', 'Nvidia', 'Samsung', 'Netflix', 'Uber', 'Airbnb', 'LinkedIn', 'Twitter', 'Stripe']
     }],
     avatar: { type: String },
     timezone: { type: String, default: 'Asia/Kolkata' },
@@ -50,6 +50,13 @@ const UserSchema = new Schema<IUser>({
         github: { type: String, trim: true },
         linkedin: { type: String, trim: true },
         portfolio: { type: String, trim: true }
+    },
+    codingProfiles: {
+        leetcode: { type: String, trim: true },
+        gfg: { type: String, trim: true },
+        codeforces: { type: String, trim: true },
+        codechef: { type: String, trim: true },
+        github: { type: String, trim: true }
     },
     isActive: { type: Boolean, default: true }
 }, {

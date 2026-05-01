@@ -304,16 +304,11 @@ export const getProblemById = async (
     res: Response
 ): Promise<void> => {
     try {
-        if (!req.user) {
-            sendError(res, 401, 'Not authenticated');
-            return;
-        }
-
         const id = getStringParam(req.params.id);
         const query = isValidObjectId(id) ? { _id: id } : { slug: id.toLowerCase() };
 
         const problem = await Problem.findOne(query)
-            .select('-hiddenTestCases -solutions')
+            .select('-hiddenTestCases')
             .populate('createdBy', 'name username')
             .populate('relatedProblems', 'title difficulty slug')
             .lean();
@@ -323,14 +318,14 @@ export const getProblemById = async (
             return;
         }
 
-        const submissions = await Submission.find({
+        const submissions = req.user ? await Submission.find({
             user: req.user._id,
             problem: problem._id,
         })
             .select('status language runtime memory createdAt')
             .sort({ createdAt: -1 })
             .limit(10)
-            .lean();
+            .lean() : [];
 
         let preferredStarterCode = null;
         if (problem.starterCode && problem.starterCode.length > 0) {
@@ -369,11 +364,6 @@ export const getAllProblems = async (
     res: Response
 ): Promise<void> => {
     try {
-        if (!req.user) {
-            sendError(res, 401, 'Not authenticated');
-            return;
-        }
-
         const { page, limit, difficulty, company, topic, pattern, search, premium, sortBy, sortOrder } = req.query;
         const { page: sanitizedPage, limit: sanitizedLimit, skip } = sanitizePagination(page, limit);
 
@@ -467,11 +457,11 @@ export const getAllProblems = async (
                 Problem.countDocuments(query),
             ]);
 
-            const solvedSubmissions = await Submission.find({
+            const solvedSubmissions = req.user ? await Submission.find({
                 user: req.user._id,
                 problem: { $in: problems.map(p => p._id) },
                 status: 'Accepted',
-            }).distinct('problem');
+            }).distinct('problem') : [];
 
             const solvedIds = new Set(solvedSubmissions.map(id => id.toString()));
 
@@ -511,11 +501,11 @@ export const getAllProblems = async (
             Problem.countDocuments(query),
         ]);
 
-        const solvedSubmissions = await Submission.find({
+        const solvedSubmissions = req.user ? await Submission.find({
             user: req.user._id,
             problem: { $in: problems.map(p => p._id) },
             status: 'Accepted',
-        }).distinct('problem');
+        }).distinct('problem') : [];
 
         const solvedIds = new Set(solvedSubmissions.map(id => id.toString()));
 
@@ -803,11 +793,6 @@ export const getProblemStats = async (
     res: Response
 ): Promise<void> => {
     try {
-        if (!req.user) {
-            sendError(res, 401, 'Not authenticated');
-            return;
-        }
-
         // Difficulty breakdown
         const difficultyCounts = await Problem.aggregate([
             { $group: { _id: '$difficulty', count: { $sum: 1 } } }
@@ -845,10 +830,10 @@ export const getProblemStats = async (
         ]);
 
         // User solved count
-        const solvedCount = await Submission.distinct('problem', {
+        const solvedCount = req.user ? await Submission.distinct('problem', {
             user: req.user._id,
             status: 'Accepted',
-        });
+        }) : [];
 
         sendResponse(res, 200, {
             success: true,
